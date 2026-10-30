@@ -1,0 +1,41 @@
+name: Deploy game to GitHub Pages
+
+# deploy อัตโนมัติทุกครั้งที่ push เข้า main (หรือกดรันเองจากแท็บ Actions)
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# สิทธิ์ที่ GITHUB_TOKEN ต้องใช้ในการ deploy ขึ้น Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# ให้ deploy ทีละครั้ง ไม่ตัดงานที่กำลัง deploy อยู่กลางทาง
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # เกมเป็น static ไฟล์เดียวอยู่ที่ root ของ repo
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

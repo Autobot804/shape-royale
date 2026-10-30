@@ -46,33 +46,39 @@ npx serve .
 | ไรเฟิล | 32 | 20 | ดาเมจสูง ยิงไกล |
 | ช็อตกัน | 11 × 6 | 6 | ระยะใกล้ รุนแรงมาก |
 
-## Deploy ขึ้น GitHub Pages
+## Deploy ขึ้น GitHub Pages (อัตโนมัติด้วย GitHub Actions)
 
-### วิธีที่ 1: ผ่านหน้าเว็บ GitHub (ง่ายที่สุด)
+repo นี้มี workflow [.github/workflows/deploy-pages.yml](.github/workflows/deploy-pages.yml)
+ที่จะ deploy เกมขึ้น Pages ให้เองทุกครั้งที่ push เข้า branch `main`
 
-1. สร้าง repository ใหม่ (public) เช่น `shape-royale`
-2. อัปโหลด `index.html` (และ `README.md`) ขึ้น repo
-3. ไปที่ **Settings → Pages**
-4. หัวข้อ **Build and deployment**
-   - Source: `Deploy from a branch`
-   - Branch: `main` และโฟลเดอร์ `/ (root)`
-5. กด **Save** รอ 1–2 นาที
-6. เกมจะออนไลน์ที่ `https://<ชื่อผู้ใช้>.github.io/<ชื่อ-repo>/`
+### ตั้งค่าครั้งแรก
+
+1. สร้าง repository (public) บน GitHub แล้ว push โค้ดขึ้นไป
+
+   ```bash
+   git remote add origin https://github.com/<ชื่อผู้ใช้>/<ชื่อ-repo>.git
+   git push -u origin main
+   ```
+
+2. ไปที่ **Settings → Pages**
+3. หัวข้อ **Build and deployment → Source** เลือก **`GitHub Actions`**
+   (ห้ามเลือก `Deploy from a branch` เพราะ workflow นี้เป็นตัว deploy เอง)
+4. ไปที่แท็บ **Actions** จะเห็น run ชื่อ **Deploy game to GitHub Pages**
+   - ถ้ายังไม่เริ่ม ให้กด **Run workflow** (workflow ตั้ง `workflow_dispatch` ไว้)
+5. รอ ~1 นาที เกมจะออนไลน์ที่ `https://<ชื่อผู้ใช้>.github.io/<ชื่อ-repo>/`
+
+### หลังจากนั้น
+
+push เข้า `main` ทุกครั้ง → เกมเวอร์ชันใหม่ขึ้นอัตโนมัติ (ดูสถานะได้ที่แท็บ Actions)
+URL ของเว็บจะแสดงในหน้า run ที่ job `deploy` ด้วย
+
+### ทางเลือก: deploy จาก branch (ไม่ใช้ Actions)
+
+ถ้าไม่อยากใช้ workflow ให้ลบ `.github/workflows/deploy-pages.yml` แล้วตั้ง
+**Settings → Pages → Source: `Deploy from a branch` → Branch: `main` / `/ (root)`**
+แทน — ได้ผลเหมือนกัน แต่จะอัปเดตช้ากว่าและไม่มี log ให้ดู
 
 > ไฟล์ต้องชื่อ `index.html` และอยู่ที่ root ของ repo เพื่อให้ Pages เปิดเป็นหน้าแรกอัตโนมัติ
-
-### วิธีที่ 2: ผ่าน Git CLI
-
-```bash
-git init
-git add index.html README.md
-git commit -m "Add SHAPE ROYALE game"
-git branch -M main
-git remote add origin https://github.com/<ชื่อผู้ใช้>/<ชื่อ-repo>.git
-git push -u origin main
-```
-
-จากนั้นเปิด Pages ตามขั้นตอนในวิธีที่ 1 (หรือใช้ `gh api` / `gh repo edit --enable-pages`)
 
 ### หมายเหตุการ deploy
 
