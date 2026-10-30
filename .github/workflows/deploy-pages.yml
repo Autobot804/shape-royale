@@ -29,6 +29,9 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
+        with:
+          # ถ้า Pages ยังไม่ถูกเปิดใน repo ให้ workflow เปิดให้อัตโนมัติ
+          enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
